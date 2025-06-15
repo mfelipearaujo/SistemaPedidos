@@ -1,0 +1,36 @@
+services:
+    api:
+        build:
+            context: .
+            dockerfile: SistemaPedidos.API/Dockerfile
+        ports:
+            - "5050:8080"
+        depends_on:
+            - postgres
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=SistemaPedidos;Username=admin_sistema;Password=senha123segura;SSL Mode=Disable
+        networks:
+            - sistema-network
+
+    postgres:
+        image: postgres:15
+        container_name: sistema-pedidos-database
+        restart: always
+        environment:
+            POSTGRES_USER: admin_sistema
+            POSTGRES_PASSWORD: senha123segura
+            POSTGRES_DB: SistemaPedidos
+        ports:
+            - "5432:5432"
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+        networks:
+            - sistema-network
+
+volumes:
+    pgdata:
+
+networks:
+    sistema-network:
+        driver: bridge
