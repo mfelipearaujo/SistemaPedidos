@@ -21,13 +21,6 @@ SistemaPedidos é uma API Restful em ASP.NET com Clean Architecture, que gerenci
 
 ---
 
-## Requisitos
-
--   [.NET 9 SDK](https://dotnet.microsoft.com/pt-br/download) (para rodar testes e executar localmente)
--   [Docker](https://docs.docker.com/get-docker/) (para rodar a API e banco via containers)
-
----
-
 ## Endpoints da API
 
 ### Cliente
@@ -62,53 +55,75 @@ SistemaPedidos é uma API Restful em ASP.NET com Clean Architecture, que gerenci
 
 ---
 
+## Requisitos
+
+-   [.NET 9 SDK](https://dotnet.microsoft.com/pt-br/download) (para rodar testes e executar localmente)
+-   [Docker](https://docs.docker.com/get-docker/) (para rodar a API e banco via containers)
+
+---
+
 ## Instruções para rodar o projeto
 
-1. Clone o repositório e acesse o diretório do projeto
+1. Clone o repositório:
 
 ```bash
 git clone https://github.com/mfelipearaujo/SistemaPedidos.git
+```
+
+2. Acesse o diretório do projeto:
+
+```bash
 cd SistemaPedidos
 ```
 
-2. Inicie os containers da API e do banco PostgreSQL
+3. Inicie os containers da API e do banco PostgreSQL:
 
 ```bash
 docker-compose up --build
 ```
 
-3. A API estará disponível em http://localhost:5050/swagger/index.html
+4. A API estará disponível em http://localhost:5050/swagger/index.html
 
-4. O banco PostgreSQL estará rodando no container, na porta padrão 5432 (não exposta para o host)
+5. O banco PostgreSQL estará rodando no container, na porta padrão 5432 (não exposta para o host).
 
 ---
 
 ## Criar e aplicar migrations (localmente)
 
-Certifique-se de estar no diretório raiz da aplicação (`/SistemaPedidos`):
+Certifique-se de estar no diretório raiz da aplicação (`/SistemaPedidos`).
+
+1. Instale o Entity Framework Core tools:
 
 ```bash
-# Criar uma nova migration chamada InitialCreate
-dotnet ef migrations add InitialCreate \
-  --project SistemaPedidos.Infrastructure/SistemaPedidos.Infrastructure.csproj \
-  --startup-project SistemaPedidos.API/SistemaPedidos.API.csproj
+dotnet tool install --global dotnet-ef
+```
 
-# Aplicar a migration ao banco de dados
-dotnet ef database update \
-  --project SistemaPedidos.Infrastructure/SistemaPedidos.Infrastructure.csproj \
-  --startup-project SistemaPedidos.API/SistemaPedidos.API.csproj
+2. Crie uma nova migration chamada InitialCreate:
+
+```bash
+dotnet ef migrations add InitialCreate --project SistemaPedidos.Infrastructure/SistemaPedidos.Infrastructure.csproj --startup-project SistemaPedidos.API/SistemaPedidos.API.csproj
+```
+
+3. Aplique a migration ao banco de dados:
+
+```bash
+dotnet ef database update --project SistemaPedidos.Infrastructure/SistemaPedidos.Infrastructure.csproj --startup-project SistemaPedidos.API/SistemaPedidos.API.csproj
 ```
 
 ---
 
 ## Executar testes (localmente)
 
-Certifique-se de ter o .NET SDK instalado:
+Certifique-se de ter o .NET SDK instalado.
+
+1. Acesse o diretório do projeto de testes:
 
 ```bash
-# Acesse o diretório do projeto de testes
 cd Tests/SistemaPedidos.Domain.Tests
+```
 
-# Execute os testes
+2. Execute os testes:
+
+```bash
 dotnet test
 ```
