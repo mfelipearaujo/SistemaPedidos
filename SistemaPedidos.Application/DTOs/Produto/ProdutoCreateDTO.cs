@@ -22,4 +22,6 @@ public class ProdutoCreateDTO
     [Required(ErrorMessage = "O código do produto é obrigatório.")]
     [StringLength(50)]
     public string Codigo { get; set; } = string.Empty;
+
+    public bool Ativo { get; set; }
 }

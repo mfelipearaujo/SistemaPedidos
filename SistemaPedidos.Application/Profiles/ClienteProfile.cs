@@ -10,7 +10,6 @@ public class ClienteProfile : Profile
     {
         CreateMap<Cliente, ClienteReadDTO>();
         CreateMap<ClienteCreateDTO, Cliente>();
-        CreateMap<ClienteUpdateDTO, Cliente>();
-        CreateMap<Cliente, ClienteUpdateDTO>();
+        CreateMap<Cliente, ClienteUpdateDTO>().ReverseMap();
     }
 }

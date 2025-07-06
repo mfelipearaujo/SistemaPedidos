@@ -10,7 +10,6 @@ public class ProdutoProfile : Profile
     {
         CreateMap<Produto, ProdutoReadDTO>();
         CreateMap<ProdutoCreateDTO, Produto>();
-        CreateMap<ProdutoUpdateDTO, Produto>();
-        CreateMap<Produto, ProdutoUpdateDTO>();
+        CreateMap<Produto, ProdutoUpdateDTO>().ReverseMap();
     }
 }

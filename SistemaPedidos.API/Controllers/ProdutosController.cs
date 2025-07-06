@@ -1,9 +1,8 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SistemaPedidos.Application.DTOs.Produto;
 using SistemaPedidos.Domain.Entities;
-using SistemaPedidos.Infrastructure.Data;
+using SistemaPedidos.Domain.Repositories;
 
 namespace SistemaPedidos.API.Controllers;
 
@@ -11,12 +10,12 @@ namespace SistemaPedidos.API.Controllers;
 [Route("api/v1/produtos")]
 public class ProdutosController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly IProdutoRepository _produtoRepository;
     private readonly IMapper _mapper;
 
-    public ProdutosController(AppDbContext context, IMapper mapper)
+    public ProdutosController(IProdutoRepository produtoRepository, IMapper mapper)
     {
-        _context = context;
+        _produtoRepository = produtoRepository;
         _mapper = mapper;
     }
 
@@ -28,8 +27,7 @@ public class ProdutosController : ControllerBase
             return BadRequest(ModelState);
 
         var produto = _mapper.Map<Produto>(dto);
-        _context.Produtos.Add(produto);
-        await _context.SaveChangesAsync();
+        await _produtoRepository.AddAsync(produto);
 
         var produtoReadDto = _mapper.Map<ProdutoReadDTO>(produto);
 
@@ -40,7 +38,7 @@ public class ProdutosController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ProdutoReadDTO>>> GetAll()
     {
-        var produtos = await _context.Produtos.AsNoTracking().ToListAsync();
+        var produtos = await _produtoRepository.GetAllAsync();
 
         var produtosDto = _mapper.Map<List<ProdutoReadDTO>>(produtos);
 
@@ -51,7 +49,7 @@ public class ProdutosController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<ProdutoReadDTO>> GetById(int id)
     {
-        var produto = await _context.Produtos.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+        var produto = await _produtoRepository.GetByIdAsync(id);
 
         if (produto is null)
             return NotFound();
@@ -71,15 +69,13 @@ public class ProdutosController : ControllerBase
         if (id != dto.Id)
             return BadRequest("ID da URL e do corpo da requisição devem ser os mesmos.");
 
-        var produto = await _context.Produtos.FindAsync(id);
-
+        var produto = await _produtoRepository.GetByIdAsync(id);
         if (produto is null)
             return NotFound();
 
         _mapper.Map(dto, produto);
 
-        _context.Entry(produto).State = EntityState.Modified;
-        await _context.SaveChangesAsync();
+        _produtoRepository.Update(produto);
 
         return NoContent();
     }
@@ -88,13 +84,12 @@ public class ProdutosController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var produto = await _context.Produtos.FindAsync(id);
+        var produto = await _produtoRepository.GetByIdAsync(id);
 
         if (produto is null)
             return NotFound();
 
-        _context.Produtos.Remove(produto);
-        await _context.SaveChangesAsync();
+        _produtoRepository.Delete(produto);
 
         return NoContent();
     }

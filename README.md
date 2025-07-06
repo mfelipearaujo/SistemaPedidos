@@ -6,7 +6,7 @@
 
 ## Introdução
 
-SistemaPedidos é uma API Restful em ASP.NET com Clean Architecture, que gerencia clientes, produtos e pedidos. O sistema está organizado em camadas, usa DTOs para transferência de dados e AutoMapper para mapeamento entre entidades e DTOs. O banco utilizado é PostgreSQL, acessado via Entity Framework Core.
+SistemaPedidos é uma API Restful em ASP.NET com Clean Architecture, que gerencia clientes, produtos e pedidos. O sistema está organizado em camadas, usa o padrão Repository para abstração do acesso a dados, utiliza DTOs para transferência de dados e AutoMapper para mapeamento entre entidades e DTOs. O banco utilizado é PostgreSQL, acessado via Entity Framework Core. Tanto a aplicação quanto o banco de dados rodam em containers Docker, orquestrados via Docker Compose.
 
 ---
 
@@ -16,8 +16,14 @@ SistemaPedidos é uma API Restful em ASP.NET com Clean Architecture, que gerenci
     Separação clara das responsabilidades em camadas:
     -   Domain: entidades e regras de negócio
     -   Application: DTOs e lógica de aplicação
-    -   Infrastructure: acesso a dados
+    -   Infrastructure: acesso a dados, implementação dos repositórios
     -   API: camada de apresentação e controllers
+
+-   **Repository Pattern**  
+    O acesso a dados é abstraído por repositórios, promovendo baixo acoplamento entre as camadas e facilitando a manutenção e testes.
+
+-   **Containers Docker**  
+    A aplicação e o banco de dados PostgreSQL são executados em containers Docker, facilitando o setup, a portabilidade e o isolamento do ambiente. O Docker Compose é utilizado para orquestrar ambos os serviços simultaneamente.
 
 ---
 
@@ -59,32 +65,35 @@ SistemaPedidos é uma API Restful em ASP.NET com Clean Architecture, que gerenci
 
 -   [.NET 9 SDK](https://dotnet.microsoft.com/pt-br/download) (para rodar testes e executar localmente)
 -   [Docker](https://docs.docker.com/get-docker/) (para rodar a API e banco via containers)
+-   [Docker Compose](https://docs.docker.com/compose/) (para orquestrar múltiplos containers)
 
 ---
 
 ## Instruções para rodar o projeto
 
-1. Clone o repositório:
+1. Certifique-se de que o Docker está instalado e em execução em sua máquina.
+
+2. Clone o repositório:
 
 ```bash
 git clone https://github.com/mfelipearaujo/SistemaPedidos.git
 ```
 
-2. Acesse o diretório do projeto:
+3. Acesse o diretório do projeto:
 
 ```bash
 cd SistemaPedidos
 ```
 
-3. Inicie os containers da API e do banco PostgreSQL:
+4. Inicie os containers da API e do banco PostgreSQL simultaneamente usando Docker Compose:
 
 ```bash
 docker-compose up --build
 ```
 
-4. A API estará disponível em http://localhost:5050/swagger/index.html
+5. A API estará disponível em http://localhost:5050/swagger/index.html
 
-5. O banco PostgreSQL estará rodando no container, na porta padrão 5432 (não exposta para o host).
+6. O banco PostgreSQL estará rodando no container, na porta padrão 5432 (não exposta para o host).
 
 ---
 

@@ -16,7 +16,6 @@ services:
     postgres:
         image: postgres:15
         container_name: sistema-pedidos-database
-        restart: always
         environment:
             POSTGRES_USER: admin_sistema
             POSTGRES_PASSWORD: senha123segura

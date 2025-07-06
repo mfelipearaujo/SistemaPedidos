@@ -1,9 +1,8 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SistemaPedidos.Application.DTOs.Pedido;
 using SistemaPedidos.Domain.Entities;
-using SistemaPedidos.Infrastructure.Data;
+using SistemaPedidos.Domain.Repositories;
 
 namespace SistemaPedidos.API.Controllers;
 
@@ -11,12 +10,20 @@ namespace SistemaPedidos.API.Controllers;
 [Route("api/v1/pedidos")]
 public class PedidosController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly IPedidoRepository _pedidoRepository;
+    private readonly IClienteRepository _clienteRepository;
+    private readonly IProdutoRepository _produtoRepository;
     private readonly IMapper _mapper;
 
-    public PedidosController(AppDbContext context, IMapper mapper)
+    public PedidosController(
+        IPedidoRepository pedidoRepository,
+        IClienteRepository clienteRepository,
+        IProdutoRepository produtoRepository,
+        IMapper mapper)
     {
-        _context = context;
+        _pedidoRepository = pedidoRepository;
+        _clienteRepository = clienteRepository;
+        _produtoRepository = produtoRepository;
         _mapper = mapper;
     }
 
@@ -27,7 +34,7 @@ public class PedidosController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var cliente = await _context.Clientes.FindAsync(pedidoDto.ClienteId);
+        var cliente = await _clienteRepository.GetByIdAsync(pedidoDto.ClienteId);
         if (cliente == null)
             return BadRequest($"Cliente com id {pedidoDto.ClienteId} não encontrado.");
 
@@ -37,7 +44,7 @@ public class PedidosController : ControllerBase
         // Preencher preços unitários e calcular total (lógica de negócio)
         foreach (var item in pedido.Itens)
         {
-            var produto = await _context.Produtos.FindAsync(item.ProdutoId);
+            var produto = await _produtoRepository.GetByIdAsync(item.ProdutoId);
             if (produto == null)
                 return BadRequest($"Produto com id {item.ProdutoId} não encontrado.");
 
@@ -46,15 +53,9 @@ public class PedidosController : ControllerBase
 
         pedido.CalcularValorTotal();
 
-        _context.Pedidos.Add(pedido);
-        await _context.SaveChangesAsync();
+        await _pedidoRepository.AddAsync(pedido);
 
-        // Recarregar pedido com relacionamentos para o retorno
-        var pedidoCriado = await _context.Pedidos
-            .Include(p => p.Cliente)
-            .Include(p => p.Itens)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.Id == pedido.Id);
+        var pedidoCriado = await _pedidoRepository.GetByIdWithDetailsAsync(pedido.Id);
 
         var pedidoReadDto = _mapper.Map<PedidoReadDTO>(pedidoCriado!);
 
@@ -65,13 +66,7 @@ public class PedidosController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PedidoReadDTO>>> GetAll()
     {
-        var pedidos = await _context.Pedidos
-            .Include(p => p.Cliente)
-            .Include(p => p.Itens)
-                .ThenInclude(i => i.Produto)
-            .AsNoTracking()
-            .ToListAsync();
-
+        var pedidos = await _pedidoRepository.GetAllWithDetailsAsync();
         var pedidosDto = _mapper.Map<List<PedidoReadDTO>>(pedidos);
 
         return Ok(pedidosDto);
@@ -81,12 +76,7 @@ public class PedidosController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<PedidoReadDTO>> GetById(int id)
     {
-        var pedido = await _context.Pedidos
-            .Include(p => p.Cliente)
-            .Include(p => p.Itens)
-                .ThenInclude(i => i.Produto)
-            .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.Id == id);
+        var pedido = await _pedidoRepository.GetByIdWithDetailsAsync(id);
 
         if (pedido is null)
             return NotFound();
@@ -103,14 +93,12 @@ public class PedidosController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var pedido = await _context.Pedidos
-            .Include(p => p.Itens)
-            .FirstOrDefaultAsync(p => p.Id == id);
+        var pedido = await _pedidoRepository.GetByIdWithDetailsAsync(id);
 
         if (pedido is null)
             return NotFound();
 
-        var cliente = await _context.Clientes.FindAsync(dto.ClienteId);
+        var cliente = await _clienteRepository.GetByIdAsync(dto.ClienteId);
         if (cliente is null)
             return BadRequest($"Cliente com id {dto.ClienteId} não encontrado.");
 
@@ -119,14 +107,14 @@ public class PedidosController : ControllerBase
         pedido.Observacoes = dto.Observacoes;
 
         // Remover itens antigos
-        _context.ItensPedido.RemoveRange(pedido.Itens);
+        _pedidoRepository.RemoveItens(pedido);
         pedido.Itens.Clear();
 
         // Mapear itens do DTO para itens da entidade e preencher preço
         var novosItens = _mapper.Map<List<ItemPedido>>(dto.Itens);
         foreach (var item in novosItens)
         {
-            var produto = await _context.Produtos.FindAsync(item.ProdutoId);
+            var produto = await _produtoRepository.GetByIdAsync(item.ProdutoId);
             if (produto is null)
                 return BadRequest($"Produto com id {item.ProdutoId} não encontrado.");
 
@@ -136,7 +124,7 @@ public class PedidosController : ControllerBase
 
         pedido.CalcularValorTotal();
 
-        await _context.SaveChangesAsync();
+        _pedidoRepository.Update(pedido);
 
         return NoContent();
     }
@@ -145,13 +133,12 @@ public class PedidosController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var pedido = await _context.Pedidos.FindAsync(id);
+        var pedido = await _pedidoRepository.GetByIdAsync(id);
 
         if (pedido is null)
             return NotFound();
 
-        _context.Pedidos.Remove(pedido);
-        await _context.SaveChangesAsync();
+        _pedidoRepository.Delete(pedido);
 
         return NoContent();
     }
