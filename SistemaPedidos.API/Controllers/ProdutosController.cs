@@ -10,12 +10,12 @@ namespace SistemaPedidos.API.Controllers;
 [Route("api/v1/produtos")]
 public class ProdutosController : ControllerBase
 {
-    private readonly IProdutoRepository _produtoRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public ProdutosController(IProdutoRepository produtoRepository, IMapper mapper)
+    public ProdutosController(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _produtoRepository = produtoRepository;
+        _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
 
@@ -27,7 +27,8 @@ public class ProdutosController : ControllerBase
             return BadRequest(ModelState);
 
         var produto = _mapper.Map<Produto>(dto);
-        await _produtoRepository.AddAsync(produto);
+        await _unitOfWork.Produtos.AddAsync(produto);
+        await _unitOfWork.CommitAsync();
 
         var produtoReadDto = _mapper.Map<ProdutoReadDTO>(produto);
 
@@ -38,7 +39,7 @@ public class ProdutosController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ProdutoReadDTO>>> GetAll()
     {
-        var produtos = await _produtoRepository.GetAllAsync();
+        var produtos = await _unitOfWork.Produtos.GetAllAsync();
 
         var produtosDto = _mapper.Map<List<ProdutoReadDTO>>(produtos);
 
@@ -49,7 +50,7 @@ public class ProdutosController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<ProdutoReadDTO>> GetById(int id)
     {
-        var produto = await _produtoRepository.GetByIdAsync(id);
+        var produto = await _unitOfWork.Produtos.GetByIdAsync(id);
 
         if (produto is null)
             return NotFound();
@@ -69,13 +70,15 @@ public class ProdutosController : ControllerBase
         if (id != dto.Id)
             return BadRequest("ID da URL e do corpo da requisição devem ser os mesmos.");
 
-        var produto = await _produtoRepository.GetByIdAsync(id);
+        var produto = await _unitOfWork.Produtos.GetByIdAsync(id);
+
         if (produto is null)
             return NotFound();
 
         _mapper.Map(dto, produto);
 
-        _produtoRepository.Update(produto);
+        _unitOfWork.Produtos.Update(produto);
+        await _unitOfWork.CommitAsync();
 
         return NoContent();
     }
@@ -84,12 +87,13 @@ public class ProdutosController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var produto = await _produtoRepository.GetByIdAsync(id);
+        var produto = await _unitOfWork.Produtos.GetByIdAsync(id);
 
         if (produto is null)
             return NotFound();
 
-        _produtoRepository.Delete(produto);
+        _unitOfWork.Produtos.Delete(produto);
+        await _unitOfWork.CommitAsync();
 
         return NoContent();
     }

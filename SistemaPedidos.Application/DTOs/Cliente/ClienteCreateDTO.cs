@@ -18,4 +18,6 @@ public class ClienteCreateDTO
 
     [StringLength(200, ErrorMessage = "O endereço deve ter no máximo 200 caracteres.")]
     public string? Endereco { get; set; }
+
+    public bool Ativo { get; set; }
 }

@@ -1,6 +1,5 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SistemaPedidos.Application.DTOs.Cliente;
 using SistemaPedidos.Domain.Entities;
 using SistemaPedidos.Domain.Repositories;
@@ -11,12 +10,12 @@ namespace SistemaPedidos.API.Controllers;
 [Route("api/v1/clientes")]
 public class ClientesController : ControllerBase
 {
-    private readonly IClienteRepository _clienteRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public ClientesController(IClienteRepository clienteRepository, IMapper mapper)
+    public ClientesController(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        _clienteRepository = clienteRepository;
+        _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
 
@@ -28,7 +27,8 @@ public class ClientesController : ControllerBase
             return BadRequest(ModelState);
 
         var cliente = _mapper.Map<Cliente>(dto);
-        await _clienteRepository.AddAsync(cliente);
+        await _unitOfWork.Clientes.AddAsync(cliente);
+        await _unitOfWork.CommitAsync();
 
         var clienteReadDto = _mapper.Map<ClienteReadDTO>(cliente);
 
@@ -39,7 +39,7 @@ public class ClientesController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ClienteReadDTO>>> GetAll()
     {
-        var clientes = await _clienteRepository.GetAllAsync();
+        var clientes = await _unitOfWork.Clientes.GetAllAsync();
 
         var clientesDto = _mapper.Map<List<ClienteReadDTO>>(clientes);
 
@@ -50,7 +50,7 @@ public class ClientesController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<ClienteReadDTO>> GetById(int id)
     {
-        var cliente = await _clienteRepository.GetByIdAsync(id);
+        var cliente = await _unitOfWork.Clientes.GetByIdAsync(id);
 
         if (cliente is null)
             return NotFound();
@@ -70,13 +70,14 @@ public class ClientesController : ControllerBase
         if (id != dto.Id)
             return BadRequest("ID da URL e do corpo da requisição devem ser os mesmos.");
 
-        var cliente = await _clienteRepository.GetByIdAsync(id);
+        var cliente = await _unitOfWork.Clientes.GetByIdAsync(id);
         if (cliente is null)
             return NotFound();
 
         _mapper.Map(dto, cliente);
 
-        _clienteRepository.Update(cliente);
+        _unitOfWork.Clientes.Update(cliente);
+        await _unitOfWork.CommitAsync();
 
         return NoContent();
     }
@@ -85,12 +86,13 @@ public class ClientesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var cliente = await _clienteRepository.GetByIdAsync(id);
+        var cliente = await _unitOfWork.Clientes.GetByIdAsync(id);
 
         if (cliente is null)
             return NotFound();
 
-        _clienteRepository.Delete(cliente);
+        _unitOfWork.Clientes.Delete(cliente);
+        await _unitOfWork.CommitAsync();
 
         return NoContent();
     }

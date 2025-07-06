@@ -25,6 +25,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Registrar AutoMapper, apontando para a assembly onde estão os Profiles
 builder.Services.AddAutoMapper(typeof(ClienteProfile).Assembly);

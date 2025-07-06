@@ -6,7 +6,7 @@
 
 ## Introdução
 
-SistemaPedidos é uma API Restful em ASP.NET com Clean Architecture, que gerencia clientes, produtos e pedidos. O sistema está organizado em camadas, usa o padrão Repository para abstração do acesso a dados, utiliza DTOs para transferência de dados e AutoMapper para mapeamento entre entidades e DTOs. O banco utilizado é PostgreSQL, acessado via Entity Framework Core. Tanto a aplicação quanto o banco de dados rodam em containers Docker, orquestrados via Docker Compose.
+SistemaPedidos é uma API Restful em ASP.NET com Clean Architecture, que gerencia clientes, produtos e pedidos. O sistema está organizado em camadas, usa os padrões Repository e Unit of Work para abstração e controle do acesso a dados, utiliza DTOs para transferência de dados e AutoMapper para mapeamento entre entidades e DTOs. O banco utilizado é PostgreSQL, acessado via Entity Framework Core. Tanto a aplicação quanto o banco de dados rodam em containers Docker, orquestrados via Docker Compose.
 
 ---
 
@@ -16,11 +16,14 @@ SistemaPedidos é uma API Restful em ASP.NET com Clean Architecture, que gerenci
     Separação clara das responsabilidades em camadas:
     -   Domain: entidades e regras de negócio
     -   Application: DTOs e lógica de aplicação
-    -   Infrastructure: acesso a dados, implementação dos repositórios
+    -   Infrastructure: acesso a dados, implementação dos repositórios e Unit of Work
     -   API: camada de apresentação e controllers
 
 -   **Repository Pattern**  
     O acesso a dados é abstraído por repositórios, promovendo baixo acoplamento entre as camadas e facilitando a manutenção e testes.
+
+-   **Unit of Work Pattern**  
+    O padrão Unit of Work coordena as operações de múltiplos repositórios sob uma única transação, garantindo atomicidade e consistência nas operações de escrita.
 
 -   **Containers Docker**  
     A aplicação e o banco de dados PostgreSQL são executados em containers Docker, facilitando o setup, a portabilidade e o isolamento do ambiente. O Docker Compose é utilizado para orquestrar ambos os serviços simultaneamente.
