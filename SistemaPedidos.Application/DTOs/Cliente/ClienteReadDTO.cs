@@ -2,7 +2,7 @@ namespace SistemaPedidos.Application.DTOs.Cliente;
 
 public class ClienteReadDTO
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string Nome { get; set; } = null!;
     public string Email { get; set; } = null!;
     public string? Telefone { get; set; }

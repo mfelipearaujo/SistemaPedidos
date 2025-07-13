@@ -4,7 +4,7 @@ namespace SistemaPedidos.Domain.Entities;
 
 public class Produto
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     [Required(ErrorMessage = "O nome do produto é obrigatório.")]
     [StringLength(100, ErrorMessage = "O nome do produto deve ter no máximo 100 caracteres.")]

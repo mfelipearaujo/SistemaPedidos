@@ -4,7 +4,7 @@ namespace SistemaPedidos.Domain.Entities;
 
 public class Cliente
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     [Required(ErrorMessage = "O nome é obrigatório.")]
     [StringLength(100, ErrorMessage = "O nome deve ter no máximo 100 caracteres.")]

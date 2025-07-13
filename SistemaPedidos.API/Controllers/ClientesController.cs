@@ -48,7 +48,7 @@ public class ClientesController : ControllerBase
 
     // GET: api/v1/clientes/{id}
     [HttpGet("{id}")]
-    public async Task<ActionResult<ClienteReadDTO>> GetById(int id)
+    public async Task<ActionResult<ClienteReadDTO>> GetById(Guid id)
     {
         var cliente = await _unitOfWork.Clientes.GetByIdAsync(id);
 
@@ -62,7 +62,7 @@ public class ClientesController : ControllerBase
 
     // PUT: api/v1/clientes/{id}
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, ClienteUpdateDTO dto)
+    public async Task<IActionResult> Update(Guid id, ClienteUpdateDTO dto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -84,7 +84,7 @@ public class ClientesController : ControllerBase
 
     // DELETE: api/v1/clientes/{id}
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         var cliente = await _unitOfWork.Clientes.GetByIdAsync(id);
 

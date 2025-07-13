@@ -6,12 +6,12 @@ namespace SistemaPedidos.Domain.Entities;
 public class ItemPedido
 {
     [Required(ErrorMessage = "O pedido é obrigatório.")]
-    public int PedidoId { get; set; }
+    public Guid PedidoId { get; set; }
 
     public Pedido Pedido { get; set; } = null!;
 
     [Required(ErrorMessage = "O produto é obrigatório.")]
-    public int ProdutoId { get; set; }
+    public Guid ProdutoId { get; set; }
 
     public Produto Produto { get; set; } = null!;
 

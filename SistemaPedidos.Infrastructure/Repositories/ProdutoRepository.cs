@@ -27,7 +27,7 @@ public class ProdutoRepository : IProdutoRepository
             .ToListAsync();
     }
 
-    public async Task<Produto?> GetByIdAsync(int id)
+    public async Task<Produto?> GetByIdAsync(Guid id)
     {
         return await _context.Produtos
             .AsNoTracking()

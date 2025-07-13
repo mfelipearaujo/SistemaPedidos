@@ -4,10 +4,10 @@ namespace SistemaPedidos.Domain.Entities;
 
 public class Pedido
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     [Required(ErrorMessage = "O cliente é obrigatório.")]
-    public int ClienteId { get; set; }
+    public Guid ClienteId { get; set; }
 
     public Cliente Cliente { get; set; } = null!;
 

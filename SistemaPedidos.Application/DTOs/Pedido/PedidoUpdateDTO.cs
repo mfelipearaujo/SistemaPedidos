@@ -6,7 +6,7 @@ namespace SistemaPedidos.Application.DTOs.Pedido;
 public class PedidoUpdateDTO
 {
     [Required(ErrorMessage = "O cliente é obrigatório.")]
-    public int ClienteId { get; set; }
+    public Guid ClienteId { get; set; }
 
     public string? Observacoes { get; set; }
 

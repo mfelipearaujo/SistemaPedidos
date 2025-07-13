@@ -27,7 +27,7 @@ public class PedidoRepository : IPedidoRepository
             .ToListAsync();
     }
 
-    public async Task<Pedido?> GetByIdAsync(int id)
+    public async Task<Pedido?> GetByIdAsync(Guid id)
     {
         return await _context.Pedidos
             .AsNoTracking()
@@ -44,7 +44,7 @@ public class PedidoRepository : IPedidoRepository
             .ToListAsync();
     }
 
-    public async Task<Pedido?> GetByIdWithDetailsAsync(int id)
+    public async Task<Pedido?> GetByIdWithDetailsAsync(Guid id)
     {
         return await _context.Pedidos
             .Include(p => p.Cliente)

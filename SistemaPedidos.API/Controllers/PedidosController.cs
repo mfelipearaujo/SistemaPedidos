@@ -67,7 +67,7 @@ public class PedidosController : ControllerBase
 
     // GET: api/v1/pedidos/{id}
     [HttpGet("{id}")]
-    public async Task<ActionResult<PedidoReadDTO>> GetById(int id)
+    public async Task<ActionResult<PedidoReadDTO>> GetById(Guid id)
     {
         var pedido = await _unitOfWork.Pedidos.GetByIdWithDetailsAsync(id);
 
@@ -81,7 +81,7 @@ public class PedidosController : ControllerBase
 
     // PUT: api/v1/pedidos/{id}
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, PedidoUpdateDTO dto)
+    public async Task<IActionResult> Update(Guid id, PedidoUpdateDTO dto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -125,7 +125,7 @@ public class PedidosController : ControllerBase
 
     // DELETE: api/v1/pedidos/{id}
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         var pedido = await _unitOfWork.Pedidos.GetByIdAsync(id);
 

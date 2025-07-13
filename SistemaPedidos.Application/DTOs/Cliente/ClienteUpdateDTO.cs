@@ -5,7 +5,7 @@ namespace SistemaPedidos.Application.DTOs.Cliente;
 public class ClienteUpdateDTO
 {
     [Required(ErrorMessage = "O id é obrigatório.")]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     [Required(ErrorMessage = "O nome é obrigatório.")]
     [StringLength(100, ErrorMessage = "O nome deve ter no máximo 100 caracteres.")]

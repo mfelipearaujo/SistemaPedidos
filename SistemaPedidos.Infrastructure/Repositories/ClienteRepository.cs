@@ -27,7 +27,7 @@ public class ClienteRepository : IClienteRepository
             .ToListAsync();
     }
 
-    public async Task<Cliente?> GetByIdAsync(int id)
+    public async Task<Cliente?> GetByIdAsync(Guid id)
     {
         return await _context.Clientes
             .AsNoTracking()
