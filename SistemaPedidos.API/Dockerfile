@@ -9,8 +9,8 @@ COPY SistemaPedidos.Application/*.csproj ./SistemaPedidos.Application/
 COPY SistemaPedidos.Domain/*.csproj ./SistemaPedidos.Domain/
 COPY SistemaPedidos.Infrastructure/*.csproj ./SistemaPedidos.Infrastructure/
 
-# Restaurar dependências
-RUN dotnet restore
+# Restaurar dependências (somente do projeto da API)
+RUN dotnet restore SistemaPedidos.API/SistemaPedidos.API.csproj
 
 # Copiar todo o código e publicar
 COPY . .
