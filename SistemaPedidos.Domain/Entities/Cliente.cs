@@ -14,6 +14,9 @@ public class Cliente
     [EmailAddress(ErrorMessage = "O e-mail informado não é válido.")]
     public string Email { get; set; } = string.Empty;
 
+    [Required(ErrorMessage = "O CPF é obrigatório.")]
+    public int CPF { get; set; }
+
     [Phone(ErrorMessage = "O telefone informado não é válido.")]
     [StringLength(20)]
     public string? Telefone { get; set; }

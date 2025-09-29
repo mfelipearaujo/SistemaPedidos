@@ -12,6 +12,9 @@ public class ClienteCreateDTO
     [EmailAddress(ErrorMessage = "O e-mail informado não é válido.")]
     public string Email { get; set; } = null!;
 
+    [Required(ErrorMessage = "O CPF é obrigatório.")]
+    public int CPF { get; set; }
+
     [Phone(ErrorMessage = "O telefone informado não é válido.")]
     [StringLength(20, ErrorMessage = "O telefone deve ter no máximo 20 caracteres.")]
     public string? Telefone { get; set; }
