@@ -5,6 +5,7 @@ public class ClienteReadDTO
     public Guid Id { get; set; }
     public string Nome { get; set; } = null!;
     public string Email { get; set; } = null!;
+    public int CPF { get; set; }
     public string? Telefone { get; set; }
     public string? Endereco { get; set; }
     public DateTime DataCadastro { get; set; }
