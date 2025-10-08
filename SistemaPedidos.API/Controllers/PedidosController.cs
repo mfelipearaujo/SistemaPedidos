@@ -23,9 +23,6 @@ public class PedidosController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<PedidoReadDTO>> Create(PedidoCreateDTO pedidoDto)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         var cliente = await _unitOfWork.Clientes.GetByIdAsync(pedidoDto.ClienteId);
         if (cliente == null)
             return BadRequest($"Cliente com id {pedidoDto.ClienteId} não encontrado.");
@@ -83,9 +80,6 @@ public class PedidosController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(Guid id, PedidoUpdateDTO dto)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         var pedido = await _unitOfWork.Pedidos.GetByIdWithDetailsAsync(id);
 
         if (pedido is null)

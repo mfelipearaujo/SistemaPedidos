@@ -23,9 +23,6 @@ public class ProdutosController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ProdutoReadDTO>> Create(ProdutoCreateDTO dto)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         var produto = _mapper.Map<Produto>(dto);
         await _unitOfWork.Produtos.AddAsync(produto);
         await _unitOfWork.CommitAsync();
@@ -64,9 +61,6 @@ public class ProdutosController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(Guid id, ProdutoUpdateDTO dto)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         if (id != dto.Id)
             return BadRequest("ID da URL e do corpo da requisição devem ser os mesmos.");
 
