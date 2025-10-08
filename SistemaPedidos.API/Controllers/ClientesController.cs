@@ -23,8 +23,6 @@ public class ClientesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ClienteReadDTO>> Create(ClienteCreateDTO dto)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
         var cliente = _mapper.Map<Cliente>(dto);
         await _unitOfWork.Clientes.AddAsync(cliente);
@@ -64,9 +62,6 @@ public class ClientesController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(Guid id, ClienteUpdateDTO dto)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         if (id != dto.Id)
             return BadRequest("ID da URL e do corpo da requisição devem ser os mesmos.");
 
